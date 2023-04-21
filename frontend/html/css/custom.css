@@ -138,6 +138,16 @@ li {
   color: rgb(84 105 212);
 }
 
+ul.pagination {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+ul.pagination li.page-item {
+  margin-right: 1px;
+  margin-bottom: 1px;
+}
+
 @media (max-width: 768px) {
   /* Styles for devices with screen width up to 768px */
   .card-body p,ul,li,h5 {
@@ -152,11 +162,16 @@ li {
   .formbg-outer {
     padding: 0 15px;
   }
-  .col-sm-6 {
+  .col-sm-5,.col-sm-6,.col-sm-7 {
     padding: 0 !important;
     -ms-flex: 0 0 100% !important;
     flex: 0 0 100% !important;
     max-width: 100% !important;
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+  }
+  .formbg-outer {
+    padding: 0 0px;
   }
   .padding-horizontal--48 {
     padding: 24px;
