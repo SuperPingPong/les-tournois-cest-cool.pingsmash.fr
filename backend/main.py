@@ -26,11 +26,11 @@ def search():
         'referer': 'https://monclub.fftt.com/',
         'Content-Type': 'application/json; charset=utf-8'
     }
-    items_per_page_target = 6
     params = {
         'page': 1,
-        'itemsPerPage': 10000,  # We have to fetch all and trim results because of shitty implem from fftt.com
-        'order[startDate]': 'asc'
+        'itemsPerPage': 6,
+        'order[startDate]': 'asc',
+        'order[name]': 'asc'
     }
     if debug:
         print(request.values)
@@ -57,8 +57,6 @@ def search():
         print(params)
     response = session.get(url, headers=headers, params=params)
     result = json.loads(response.content)
-    result['hydra:member'] = result['hydra:member'][(params.get('page') - 1) * items_per_page_target:params.get(
-        'page') * items_per_page_target]
     return json.dumps(result), 200, {'Content-Type': 'application/json; charset=utf-8'}
 
 

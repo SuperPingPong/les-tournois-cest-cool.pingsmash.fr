@@ -185,7 +185,7 @@ $(document).ready(function() {
           if (item.tables.length > 0) {
             let tableDate = new Date(item.tables[0].date);
             var formattedTableDateHead = tableDate.getFullYear() + '-' + (tableDate.getMonth() + 1).toString().padStart(2, '0') + '-' + tableDate.getDate().toString().padStart(2, '0')
-            content2_html += '<ul aria-label="' + formattedTableDateHead + '">'
+            content2_html += '<ul aria-label="">'
           } else {
             var formattedTableDateHead = ''
             content2_html += '<ul>'
@@ -194,9 +194,10 @@ $(document).ready(function() {
           item.tables.forEach(function(table) {
               let tableDate = new Date(table.date);
               formattedTableDate = tableDate.getFullYear() + '-' + (tableDate.getMonth() + 1).toString().padStart(2, '0') + '-' + tableDate.getDate().toString().padStart(2, '0')
+
               if (formattedTableDate != formattedTableDateHead) {
                 formattedTableDateHead = formattedTableDate;
-                content2_html += '</ul><ul aria-label="' + formattedTableDateHead + '">';
+                content2_html += '</ul><ul aria-label="">';
               }
               content2_html += '<li>'
               if (table.name != null) {
