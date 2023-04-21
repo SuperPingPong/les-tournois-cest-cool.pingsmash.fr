@@ -96,6 +96,9 @@ $(document).ready(function() {
     paginationBottom.html('');
     const pageSize = 6;
 
+    // Get the position of the button element
+    var buttonOffset = $("button[type='submit']").offset().top;
+
     $.ajax({
       type: 'POST',
       url: '/api/search',
@@ -130,6 +133,10 @@ $(document).ready(function() {
               var page = $(this).data('page');
               $('form').append('<input type="hidden" name="page" value="' + page + '">');
               $('form').submit();
+
+              $("html, body").animate({
+                scrollTop: buttonOffset
+              }, 1000);
            });
 
            element.show();
