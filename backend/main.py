@@ -43,9 +43,12 @@ def search():
             params['startDate[after]'] = f'{value}T00:00:00'
         if key == 'end-date':
             params['endDate[before]'] = f'{value}T00:00:00'
-        if key in ['type[]', 'status[]', 'address.postalCode', 'address.addressLocality']:
+        if key in ['type[]', 'status[]']:
             if key not in params:
-                params[key] = value
+                params[key] = []
+            params[key].append(value)
+        if key in ['address.postalCode', 'address.addressLocality']:
+            params[key] = value
         if key == 'page':
             params[key] = value
 
