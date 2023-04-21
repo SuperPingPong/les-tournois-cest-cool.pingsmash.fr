@@ -1,0 +1,12 @@
+version: '2'
+services:
+  frontend:
+    build: frontend
+    depends_on:
+      - api
+    restart: always
+    ports:
+      - "0.0.0.0:39080:80"
+  api:
+    build: backend
+    restart: always
