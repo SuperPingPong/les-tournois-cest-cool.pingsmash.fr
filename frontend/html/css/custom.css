@@ -1,0 +1,167 @@
+table.dataTable thead th {
+    text-align: center;
+}
+
+.table thead th {
+    vertical-align: middle;
+}
+
+.table {
+    width: 100% !important;
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+table.dataTable tr td {
+    text-align: center;
+}
+
+td {
+    word-wrap: break-word;
+    word-break: break-all;
+    white-space: normal;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:not(.previous):not(.next) {
+    padding: 0.1em;
+    background-color: rgb(84, 105, 212) !important;
+    box-shadow: rgb(0 0 0 / 0%) 0 0 0 0, rgb(0 0 0 / 0%) 0 0 0 0, rgb(0 0 0 / 12%) 0 1px 1px 0, rgb(84 105 212) 0 0 0 1px, rgb(0 0 0 / 0%) 0 0 0 0, rgb(0 0 0 / 0%) 0 0 0 0, rgb(60 66 87 / 8%) 0 2px 5px 0;
+    color: #ffffff !important;
+    font-weight: 600;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:not(.previous):not(.next) {
+    background-color: rgb(32, 45, 99) !important;
+    border-color: rgb(32, 45, 99);
+    box-shadow: rgb(0 0 0 / 0%) 0 0 0 0, rgb(0 0 0 / 0%) 0 0 0 0, rgb(0 0 0 / 12%) 0 1px 1px 0, rgb(32, 45, 99) 0 0 0 1px, rgb(0 0 0 / 0%) 0 0 0 0, rgb(0 0 0 / 0%) 0 0 0 0, rgb(60 66 87 / 8%) 0 2px 5px 0;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover:not(.paginate_button.disabled) {
+    background-image: linear-gradient(rgb(84, 105, 212) 0%, rgb(32, 45, 99) 100%);
+    background-color: rgb(32, 45, 99) !important;
+    color: #ffffff;
+}
+
+i {
+    color: #ffffff !important;
+}
+
+.suggestions {
+    display: none;
+    background-color: white;
+    border: 1px solid gray;
+    width: 100%;
+}
+
+.suggestions div {
+    padding: 5px;
+    cursor: pointer;
+}
+
+.suggestions div:hover {
+    background-color: lightgray;
+}
+
+.result {
+    display: none;
+}
+
+p {
+    display: inline;
+}
+
+.btn-primary:hover {
+  background-color: rgb(64, 85, 172);
+}
+
+.dropdown-item.active {
+  background-color: rgb(84 105 212);
+  color: white;
+}
+
+.dropdown-item.active>span>label {
+  color: white;
+}
+
+.btn-group {
+  width: 100%;
+}
+
+.formbg {
+  width: 95%;
+  max-width: unset;
+}
+
+.card-body p {
+  display: block;
+  margin-bottom: 0;
+}
+
+ul:before{
+    content:attr(aria-label);
+    font-size:120%;
+    font-weight:bold;
+}
+
+li {
+  list-style-position: inside;
+}
+
+.pagination-container {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.page-item.active .page-link {
+  background-color: rgb(84 105 212);
+  border-color: rgb(84 105 212);
+}
+
+.page-link:hover {
+  color: rgb(84 105 212);
+}
+
+.page-item.active .page-link {
+  background-color: rgb(84 105 212);
+  border-color: rgb(84 105 212);
+}
+
+.page-item.active .page-link {
+  background-color: rgb(84 105 212);
+  border-color: rgb(84 105 212);
+}
+
+.page-link {
+  color: rgb(84 105 212);
+}
+
+@media (max-width: 768px) {
+  /* Styles for devices with screen width up to 768px */
+  .card-body p,ul,li,h5 {
+    font-size: 85% !important;
+  }
+  .box-root {
+    flex-direction: column;
+  }
+  .box-root > div {
+    grid-area: unset !important;
+  }
+  .formbg-outer {
+    padding: 0 15px;
+  }
+  .col-sm-6 {
+    padding: 0 !important;
+    -ms-flex: 0 0 100% !important;
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+  }
+  .padding-horizontal--48 {
+    padding: 24px;
+  }
+  .col-sm-3 {
+    margin-top: 15px !important;
+  }
+}

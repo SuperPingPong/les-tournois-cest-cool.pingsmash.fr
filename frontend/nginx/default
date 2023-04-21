@@ -1,0 +1,15 @@
+server {
+        listen 80 default_server;
+        server_name localhost;
+        server_tokens off;
+
+        location /api  {
+           proxy_pass  http://api:5000;
+        }
+
+        location / {
+            root /usr/share/nginx/html;
+            error_page 404 /404.html;
+            index index.html;
+        }
+}
