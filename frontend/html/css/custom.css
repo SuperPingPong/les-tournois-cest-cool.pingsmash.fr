@@ -134,6 +134,16 @@ li {
   border-color: rgb(84 105 212);
 }
 
+.page-item.active .page-link:hover {
+  color: white;
+  pointer-events: none;
+  cursor: default;
+}
+
+.page-item:not(.active) .page-link:hover {
+  cursor: pointer;
+}
+
 .page-link {
   color: rgb(84 105 212);
 }
