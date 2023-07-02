@@ -6,7 +6,7 @@ services:
       - api
     restart: always
     ports:
-      - "0.0.0.0:39081:80"
+      - "0.0.0.0:39089:80"
     volumes:
       - $PWD/frontend/html:/usr/share/nginx/html
   api:
