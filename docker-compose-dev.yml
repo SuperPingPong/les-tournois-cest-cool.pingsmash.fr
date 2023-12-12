@@ -15,5 +15,6 @@ services:
     environment:
       - DEBUG=True
       - PYTHONUNBUFFERED=1
+      - SENTRY_DSN=$SENTRY_DSN
     volumes:
       - $PWD/backend/main.py:/app/main.py

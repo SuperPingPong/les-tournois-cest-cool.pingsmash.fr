@@ -1,5 +1,7 @@
 from flask import Flask, request
 from flask_cors import CORS
+import sentry_sdk
+from sentry_sdk.integrations.flask import FlaskIntegration
 
 from os import environ
 import requests
@@ -8,15 +10,27 @@ import urllib3
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-proxy = "https://mute-hill-43b6.cryptoshotgun.workers.dev/"
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 debug = environ.get('DEBUG', False)
 
+SENTRY_DSN = environ.get('SENTRY_DSN')
+if SENTRY_DSN is None:
+    raise Exception('Please configure environment variable SENTRY_DSN')
+sentry_sdk.init(
+    dsn=SENTRY_DSN,
+    integrations=[FlaskIntegration()]
+)
+
+# Error handler for other exceptions
+@app.errorhandler(Exception)
+def handle_exception(error):
+    sentry_sdk.capture_exception(error)
+    return error.description, error.code
+
 session = requests.session()
 session.verify = False
-session.proxies = {"http": proxy}
 
 
 @app.route("/api/search", methods=['POST', 'OPTIONS'])

@@ -10,3 +10,5 @@ services:
   api:
     build: backend
     restart: always
+    environment:
+      - SENTRY_DSN=$SENTRY_DSN
