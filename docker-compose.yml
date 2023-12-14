@@ -12,3 +12,11 @@ services:
     restart: always
     environment:
       - SENTRY_DSN=$SENTRY_DSN
+  bot:
+    build: bot
+    depends_on:
+      - api
+    restart: always
+    environment:
+      - GMAP_API_KEY=$GMAP_API_KEY
+      - WHAPI_TOKEN=$WHAPI_TOKEN

@@ -9,7 +9,5 @@ RUN pip install --user --upgrade pip
 COPY --chown=worker:worker requirements.txt requirements.txt
 RUN pip install --user -r requirements.txt
 
-COPY --chown=worker:worker .env .env
-
 COPY --chown=worker:worker . .
 CMD python main.py

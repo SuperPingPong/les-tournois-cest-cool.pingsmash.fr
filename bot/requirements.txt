@@ -1,2 +1,1 @@
 googlemaps
-python-dotenv

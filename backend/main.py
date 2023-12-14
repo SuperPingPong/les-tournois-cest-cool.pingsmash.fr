@@ -22,6 +22,7 @@ sentry_sdk.init(
     dsn=SENTRY_DSN,
     integrations=[FlaskIntegration()]
 )
+sentry_sdk.set_tag("app", "fftt-les-tournois-cest-cool")
 
 # Error handler for other exceptions
 @app.errorhandler(Exception)

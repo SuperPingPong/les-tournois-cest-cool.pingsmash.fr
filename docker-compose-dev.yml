@@ -16,5 +16,7 @@ services:
       - DEBUG=True
       - PYTHONUNBUFFERED=1
       - SENTRY_DSN=$SENTRY_DSN
+    ports:
+      - "127.0.0.1:5000:5000"
     volumes:
       - $PWD/backend/main.py:/app/main.py

@@ -1,6 +1,5 @@
 from datetime import datetime
 import json
-from dotenv import load_dotenv
 from os import environ
 import hashlib
 import logging
@@ -21,9 +20,11 @@ session.headers = {
 }
 
 PAGE_SIZE=6
-URL = 'https://les-tournois-cest-cool.pingsmash.fr/api/search'
+URL = 'http://api:5000/api/search'
 
-load_dotenv()
+#  MAX_DISTANCE = 300 * 1000 # in meters
+MAX_DISTANCE = 100000 * 1000 # in meters
+
 GMAP_API_KEY=environ.get('GMAP_API_KEY')
 if GMAP_API_KEY is None:
     raise Exception('Please set environment var GMAP_API_KEY')
@@ -43,6 +44,7 @@ def get_response(page: int):
         {"name": "start-date", "value": start_date},
         {"name": "end-date", "value": end_date},
         {"name": "status[]", "value": "1"},
+        {"name": "type[]", "value": "I"},
         {"name": "type[]", "value": "A"},
         {"name": "type[]", "value": "B"},
     ]
@@ -91,65 +93,77 @@ def compute_tournaments():
         response = get_response(page=page)
         RESPONSES.append(response)
 
+    RESPONSES_TO_COMPUTE = []
     for response in RESPONSES:
         members=response['hydra:member']
-        for member in members:
+        RESPONSES_TO_COMPUTE += members
 
-            destination = ''
-            address = member["address"]
-            if address.get("streetAddress") is not None:
-                destination += address["streetAddress"] + ', '
-            if address.get("postalCode") is not None:
-                destination += address["postalCode"] + ', '
-            if address.get("addressLocality") is not None:
-                destination += address["addressLocality"] + ', '
-            if address.get("addressRegion") is not None:
-                destination += address["addressRegion"]
-            destination = destination.rstrip(', ').strip()
+    RESPONSES_TO_COMPUTE = sorted(RESPONSES_TO_COMPUTE, key=lambda x: x.get('startDate', ''))
 
-            title = member['name']
-            club_name = member['club']['name']
+    for member in RESPONSES_TO_COMPUTE:
 
-            start_date = member['startDate']
-            formatted_start_date = f"{start_date[:4]}-{start_date[5:7]}-{start_date[8:10]}"
-            end_date = member['endDate']
-            formatted_end_date = f"{end_date[:4]}-{end_date[5:7]}-{end_date[8:10]}"
+        destination = ''
+        address = member["address"]
+        if address.get("streetAddress") is not None:
+            destination += address["streetAddress"] + ', '
+        if address.get("postalCode") is not None:
+            destination += address["postalCode"] + ', '
+        if address.get("addressLocality") is not None:
+            destination += address["addressLocality"] + ', '
+        if address.get("addressRegion") is not None:
+            destination += address["addressRegion"]
+        destination = destination.rstrip(', ').strip()
 
-            date_range = f'Dates: {formatted_start_date} - {formatted_end_date}'
+        title = member['name']
+        club_name = member['club']['name']
 
-            contact = f'Organisateur: {member["contacts"][0]["givenName"]} {member["contacts"][0]["familyName"]}'
-            email = f'Contact: {member["contacts"][0]["email"]}'
+        start_date = member['startDate']
+        formatted_start_date = f"{start_date[:4]}-{start_date[5:7]}-{start_date[8:10]}"
+        end_date = member['endDate']
+        formatted_end_date = f"{end_date[:4]}-{end_date[5:7]}-{end_date[8:10]}"
 
-            rule = member['rules']['url']
-            url_components = urlparse(rule)
-            encoded_path = quote(url_components.path)
-            encoded_query = quote(url_components.query)
-            rule = urlunparse((url_components.scheme, url_components.netloc, encoded_path, url_components.params, encoded_query, url_components.fragment))
+        #  date_range = f'Dates: {formatted_start_date} - {formatted_end_date}'
 
-            fingerprint = create_fingerprint(title, club_name, destination, start_date, end_date, contact, email)
-            if fingerprint in RESULT:
-                continue
+        contact = f'Organisateur: {member["contacts"][0]["givenName"]} {member["contacts"][0]["familyName"]}'
+        email = f'Contact: {member["contacts"][0]["email"]}'
 
-            directions_result = gmaps.directions(ORIGIN, destination, mode="driving")
-            driving_distance_km = directions_result[0]['legs'][0]['distance']['text'].replace(' ', '')
-            maps_url = create_maps_link(ORIGIN, destination)
+        rule = member['rules']['url']
+        url_components = urlparse(rule)
+        encoded_path = quote(url_components.path)
+        encoded_query = quote(url_components.query)
+        rule = urlunparse((url_components.scheme, url_components.netloc, encoded_path, url_components.params, encoded_query, url_components.fragment))
 
-            result = [
-                f"🏆 {title}",
-                f"🏠 {club_name}",
-                f"📍 {destination}",
-                f"📅 {formatted_start_date} - {formatted_end_date}",
-                #  f"📅 {date_range}"
-                f"👤 {contact}",
-                f"✉️ {email}",
-                f"📜 {rule}",
-                f"🚗 {driving_distance_km}",
-                f"🗺️ {maps_url}",
-                ''
-            ]
+        fingerprint = create_fingerprint(title, club_name, destination, start_date, end_date, contact, email)
+        if fingerprint in RESULT:
+            continue
 
-            RESULT[fingerprint] = result
-            time.sleep(0.5)
+        directions_result = gmaps.directions(ORIGIN, destination, mode="driving")
+        driving_distance_km = directions_result[0]['legs'][0]['distance']['text'].replace(' ', '')
+
+        driving_distance_m_value = directions_result[0]['legs'][0]['distance']['value']
+        if driving_distance_m_value > MAX_DISTANCE:
+            RESULT[fingerprint] = None
+            continue
+
+        maps_url = create_maps_link(ORIGIN, destination)
+
+        result = [
+            f"🏆 {title}",
+            f"🏠 {club_name}",
+            f"📍 {destination}",
+            f"📅 {formatted_start_date} - {formatted_end_date}",
+            #  f"📅 {date_range}"
+            f"👤 {contact}",
+            f"✉️ {email}",
+            f"📜 {rule}",
+            f"🚗 {driving_distance_km}",
+            f"🗺️ {maps_url}",
+            ''
+        ]
+        #  print('\n'.join(result))
+
+        RESULT[fingerprint] = result
+        time.sleep(0.5)
 
 def send_notification(message: str):
     url='https://gate.whapi.cloud/messages/text'
@@ -184,7 +198,10 @@ if __name__ == '__main__':
         # Send notifications for new tournaments
         FINGERPRINTS_TO_COMPUTE = list(NEW_TOURNAMENT_FINGERPRINTS - CURRENT_TOURNAMENT_FINGERPRINTS)
         for fingerprint in FINGERPRINTS_TO_COMPUTE:
-            result_to_display='\n'.join(RESULT[fingerprint])
+            result = RESULT[fingerprint]
+            if result is None:
+                continue
+            result_to_display='\n'.join(result)
             message = '🤖 Nouveau tournoi détecté 🤖\n\n' + result_to_display
             logging.info(message)
             logging.info('---')
