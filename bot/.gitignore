@@ -3,3 +3,6 @@
 
 # debug
 debug.py
+
+# scripts
+*.sh

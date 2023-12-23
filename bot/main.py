@@ -22,8 +22,30 @@ session.headers = {
 PAGE_SIZE=6
 URL = 'http://api:5000/api/search'
 
-#  MAX_DISTANCE = 300 * 1000 # in meters
-MAX_DISTANCE = 100000 * 1000 # in meters
+MAX_DISTANCE = 350 * 1000 # in meters
+MAX_DISTANCE_HOLIDAYS = 550 * 1000 # in meters
+
+HOLIDAYS_PERIODS = [
+    ('2023-10-21', '2023-11-06'),
+    ('2023-12-23', '2024-01-08'),
+    ('2024-02-10', '2024-02-26'),
+    ('2024-04-06', '2024-04-22'),
+    ('2024-07-06', '2024-09-02'),
+    ('2024-10-19', '2024-11-04'),
+    ('2024-12-21', '2025-01-06'),
+    ('2025-02-15', '2025-03-03'),
+    ('2025-04-12', '2025-04-28'),
+    ('2025-07-05', '2025-09-01'),
+    ('2025-10-18', '2025-11-03'),
+    ('2025-12-20', '2026-01-05'),
+    ('2026-02-21', '2026-03-09'),
+    ('2026-04-18', '2026-05-04'),
+    ('2026-07-05', '2026-09-01')
+]
+
+GLOBAL_MAX_DISTANCE=environ.get('GLOBAL_MAX_DISTANCE', None)
+if GLOBAL_MAX_DISTANCE is not None:
+    GLOBAL_MAX_DISTANCE = int(GLOBAL_MAX_DISTANCE) * 1000 # in meters
 
 GMAP_API_KEY=environ.get('GMAP_API_KEY')
 if GMAP_API_KEY is None:
@@ -34,6 +56,9 @@ gmaps = googlemaps.Client(key=GMAP_API_KEY)
 WHAPI_TOKEN=environ.get('WHAPI_TOKEN')
 if WHAPI_TOKEN is None:
     raise Exception('Please set environment var WHAPI_TOKEN')
+WHAPI_GROUP=environ.get('WHAPI_GROUP')
+if WHAPI_GROUP is None:
+    raise Exception('Please set environment var WHAPI_GROUP')
 
 def get_response(page: int):
     now = datetime.now()
@@ -141,7 +166,20 @@ def compute_tournaments():
         driving_distance_km = directions_result[0]['legs'][0]['distance']['text'].replace(' ', '')
 
         driving_distance_m_value = directions_result[0]['legs'][0]['distance']['value']
-        if driving_distance_m_value > MAX_DISTANCE:
+
+        if GLOBAL_MAX_DISTANCE is not None:
+            max_distance = GLOBAL_MAX_DISTANCE
+        else:
+            max_distance = MAX_DISTANCE
+            start_date_obj = datetime.strptime(start_date, '%Y-%m-%dT%H:%M:%S')
+            for start_holiday, end_holiday in HOLIDAYS_PERIODS:
+                start_holiday_obj = datetime.strptime(start_holiday, '%Y-%m-%d')
+                end_holiday_obj = datetime.strptime(end_holiday, '%Y-%m-%d')
+                # start_date is during holidays
+                if start_holiday_obj <= start_date_obj <= end_holiday_obj:
+                    max_distance = MAX_DISTANCE_HOLIDAYS
+
+        if driving_distance_m_value > max_distance:
             RESULT[fingerprint] = None
             continue
 
@@ -167,14 +205,13 @@ def compute_tournaments():
 
 def send_notification(message: str):
     url='https://gate.whapi.cloud/messages/text'
-    group = '120363206509427829@g.us'
     headers = {
         'Accept': 'application/json',
         'Authorization': f'Bearer {WHAPI_TOKEN}'
     }
     data =  {
         'typing_time': 0,
-        'to': group,
+        'to': WHAPI_GROUP,
         'body': message
     }
     return session.post(url, headers=headers, json=data)
