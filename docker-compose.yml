@@ -16,7 +16,7 @@ services:
     build: bot
     depends_on:
       - api
-    restart: always
+    #  restart: always
     environment:
       - GMAP_API_KEY=$GMAP_API_KEY
       - WHAPI_TOKEN=$WHAPI_TOKEN
