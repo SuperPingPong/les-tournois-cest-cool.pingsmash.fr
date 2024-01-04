@@ -127,6 +127,9 @@ def compute_tournaments():
 
     for member in RESPONSES_TO_COMPUTE:
 
+        if member is None:
+            continue
+
         destination = ''
         address = member["address"]
         if address.get("streetAddress") is not None:
