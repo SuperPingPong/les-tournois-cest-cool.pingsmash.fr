@@ -152,7 +152,7 @@ def compute_tournaments():
         contact = f'Organisateur: {member["contacts"][0]["givenName"]} {member["contacts"][0]["familyName"]}'
         email = f'Contact: {member["contacts"][0]["email"]}'
 
-        rule = member['rules']['url']
+        rule = member.get('rules', {}).get('url', '...')
         url_components = urlparse(rule)
         encoded_path = quote(url_components.path)
         encoded_query = quote(url_components.query)
