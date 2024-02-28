@@ -181,6 +181,12 @@ $(document).ready(function() {
           const address = $('<p>').addClass('card-text').text(destination);
           const contact = $('<p>').addClass('card-text').text('Organisateur: ' + item.contacts[0].givenName + ' ' + item.contacts[0].familyName);
           const email = $('<p>').addClass('card-text').text('Contact: ' + item.contacts[0].email);
+
+          if (item.rules === null || item.rules === undefined) {
+            item.rules = { url: '' };
+          } else if (item.rules.url === null || item.rules.url === undefined) {
+            item.rules.url = '';
+          }
           const rule = $('<p class="card-text">Règlement: <a style="text-decoration: underline" href="' + item.rules.url + '">Afficher le règlement</a></p>')
 
           const card2 = $('<div>').addClass('card');
