@@ -184,13 +184,10 @@ $(document).ready(function() {
 
           if (item.rules === null || item.rules === undefined) {
             item.rules = { url: '' };
-            const rule = $('<p class="card-text"></p>')
           } else if (item.rules.url === null || item.rules.url === undefined) {
             item.rules.url = '';
-            const rule = $('<p class="card-text"></p>')
-          } else {
-            const rule = $('<p class="card-text">Règlement: <a style="text-decoration: underline" href="' + item.rules.url + '">Afficher le règlement</a></p>')
           }
+          const rule = $('<p class="card-text">' + (item.rules.url === '' ? '' : 'Règlement: <a style="text-decoration: underline" href="' + item.rules.url + '">Afficher le règlement</a>') + '</p>')
 
           const card2 = $('<div>').addClass('card');
           const cardBody2 = $('<div>').addClass('card-body');
