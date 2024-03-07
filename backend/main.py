@@ -5,6 +5,8 @@ from sentry_sdk.integrations.flask import FlaskIntegration
 
 from os import environ
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 import json
 import urllib3
 
@@ -30,8 +32,17 @@ def handle_exception(error):
     sentry_sdk.capture_exception(error)
     return error.description, error.code
 
+retry_strategy = Retry(
+    total=3, #  Maximum number of retries
+    backoff_factor=0.3, #  Exponential backoff factor
+    status_forcelist=[500, 502, 503, 504]  # HTTP status codes to retry on
+)
+
 session = requests.session()
 session.verify = False
+adapter = HTTPAdapter(max_retries=retry_strategy)
+session.mount('http://', adapter)
+session.mount('https://', adapter)
 
 
 @app.route("/api/search", methods=['POST', 'OPTIONS'])
