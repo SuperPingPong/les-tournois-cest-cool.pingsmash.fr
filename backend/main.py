@@ -30,7 +30,15 @@ sentry_sdk.set_tag("app", "fftt-les-tournois-cest-cool")
 @app.errorhandler(Exception)
 def handle_exception(error):
     sentry_sdk.capture_exception(error)
-    return error.description, error.code
+    if not hasattr(error, 'code'):
+        error_code = 500
+    else:
+        error_code = error.code
+    if not hasattr(error, 'description'):
+        error_description = ''
+    else:
+        error_description = error.description
+    return error_description, error_code
 
 retry_strategy = Retry(
     total=3, #  Maximum number of retries
